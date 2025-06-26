@@ -1,27 +1,34 @@
-// controllers/submissionController.js
+import Contest from '../model/contests.js';
+import User from '../model/User.js';
+import SubmissionStatus from '../model/submissionstatus.js';  
 import axios from 'axios';
-import Contest from '../models/Contest.js';
-import User from '../models/User.js';
-import SubmissionStatus from '../models/SubmissionStatus.js';
 
 export const getContestSubmissionStatus = async (req, res) => {
   try {
+    console.log("📥 Contest ID from params:", req.params.id);
+
     const contest = await Contest.findById(req.params.id);
-    if (!contest) return res.status(404).json({ error: "Contest not found" });
+    if (!contest) {
+      console.log("❌ Contest not found");
+      return res.status(404).json({ error: "Contest not found" });
+    }
 
     const startSec = Math.floor(contest.startTime.getTime() / 1000);
     const endSec = startSec + contest.duration * 60;
+    console.log("⏱ Contest Start (sec):", startSec, "End (sec):", endSec);
 
     const user = await User.findById(req.user.id);
     if (!user || !user.codeforcesHandle) {
+      console.log("❌ User or Codeforces handle missing:", user);
       return res.status(400).json({ error: "Codeforces handle missing for user" });
     }
 
+    console.log("🔗 Fetching submissions for:", user.codeforcesHandle);
     const submissionsRes = await axios.get(
       `https://codeforces.com/api/user.status?handle=${user.codeforcesHandle}`
     );
-
     const submissions = submissionsRes.data.result;
+    console.log("📄 Total submissions fetched:", submissions.length);
 
     const problemsStatus = await Promise.all(contest.problems.map(async (problem) => {
       const solved = submissions.some(sub =>
@@ -34,6 +41,7 @@ export const getContestSubmissionStatus = async (req, res) => {
 
       const verdict = solved ? 'Accepted' : 'Rejected';
       const problemId = `${problem.contestId}${problem.index}`;
+      console.log(`🧪 ${problemId} verdict:`, verdict);
 
       await SubmissionStatus.findOneAndUpdate(
         {
@@ -52,10 +60,10 @@ export const getContestSubmissionStatus = async (req, res) => {
       };
     }));
 
-    res.json({ problemsStatus });
+    return res.json({ problemsStatus });
 
   } catch (err) {
-    console.error("Error in getContestSubmissionStatus:", err);
+    console.error("❌ Error in getContestSubmissionStatus:", err);
     res.status(500).json({ error: "Failed to check contest status" });
   }
 };

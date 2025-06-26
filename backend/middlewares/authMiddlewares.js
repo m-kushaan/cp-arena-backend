@@ -1,15 +1,28 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import User from '../model/User.js';
 
-const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Contains user ID or handle
-    next();
-  } catch (err) {
-    return res.status(403).json({ message: "Invalid Token" });
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select("-password");
+
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      req.user = user; // ✅ attach full user
+      next();
+    } catch (err) {
+      console.error("JWT error:", err.message);
+      return res.status(401).json({ message: "Invalid token" });
+    }
+  } else {
+    return res.status(401).json({ message: "No token provided" });
   }
 };
 

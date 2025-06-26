@@ -1,18 +1,19 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../model/User.js';
-import { registerSchema, loginSchema } from "../validations/authValidation.js";
+import { registerSchema, loginSchema } from "../validations/authValidations.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'yourSecretKey';
 
 export const register = async (req, res) => {
   const result = registerSchema.safeParse(req.body);
 
+
   if (!result.success) {
     return res.status(400).json({ errors: result.error.errors.map(e => e.message) });
   }
 
-  const { username, email, password } = result.data;
+  const { username, email, password , codeforcesHandle } = result.data;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -20,9 +21,9 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, email, password: hashedPassword });
+    const user = await User.create({ username, email, password: hashedPassword ,codeforcesHandle});
 
-    res.status(201).json({ message: "User registered successfully", user: { username, email } });
+    res.status(201).json({ message: "User registered successfully", user: { username, email ,codeforcesHandle} });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

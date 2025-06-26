@@ -1,15 +1,20 @@
 import axios from "axios";
 
-// Get problemset once (can later cache it)
+// Shared cache
 let cachedProblems = null;
 
-export const getRandomProblemByRating = async (rating) => {
+export const getCodeforcesProblemset = async () => {
   if (!cachedProblems) {
     const res = await axios.get("https://codeforces.com/api/problemset.problems");
     cachedProblems = res.data.result.problems;
   }
+  return cachedProblems;
+};
 
-  const filtered = cachedProblems.filter(
+export const getRandomProblemByRating = async (rating) => {
+  const problems = await getCodeforcesProblemset();
+
+  const filtered = problems.filter(
     (p) => p.rating === rating && p.contestId && p.index
   );
 
