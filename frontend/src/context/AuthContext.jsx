@@ -10,22 +10,22 @@ export const AuthProvider = ({ children }) => {
 
   // Called once on mount, keeps auth in sync
   useEffect(() => {
-  // check token in localStorage
   let savedToken = localStorage.getItem("token");
-
-  // check token in URL (after Google login)
   const params = new URLSearchParams(window.location.search);
   const urlToken = params.get("token");
 
   if (urlToken) {
+    console.log("🌐 Google token found in URL");
     savedToken = urlToken;
     localStorage.setItem("token", urlToken);
-    // remove token from URL
     window.history.replaceState({}, document.title, "/");
   }
 
   if (savedToken) {
+    console.log("🔐 AuthContext token set:", savedToken);
     setToken(savedToken);
+  } else {
+    console.warn("⚠️ No token found in storage or URL");
   }
 }, []);
 

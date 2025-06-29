@@ -23,22 +23,7 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
-  };
-
-  // Google auth callback handling
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    if (token) {
-      login(token);
-      toast.success("Logged in with Google!");
-      window.history.replaceState({}, document.title, "/");
-      navigate("/");
-    }
-  }, []);
-
+  
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white flex items-center justify-center">
       {/* Background glow effects */}
@@ -71,14 +56,6 @@ export default function Login() {
           className="w-full bg-red-600 hover:bg-red-700 transition py-2 rounded font-semibold"
         >
           Login
-        </button>
-        <div className="my-4 text-center text-gray-400">or</div>
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="w-full bg-white text-black hover:bg-gray-300 transition py-2 rounded font-semibold"
-        >
-          Continue with Google
         </button>
       </form>
     </div>

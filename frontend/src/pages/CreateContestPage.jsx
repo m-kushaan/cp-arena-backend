@@ -29,6 +29,7 @@ export default function CreateContestPage() {
     }
 
     try {
+        console.log("Token in CreateContestPage:", token);
       const res = await axios.post(
         "/api/contest/auto-create",
         {
