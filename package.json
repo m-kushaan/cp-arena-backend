@@ -1,0 +1,27 @@
+{
+  "name": "cp-arena-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "backend/index.js",
+  "scripts": {
+    "start": "node backend/index.js",
+    "dev": "nodemon backend/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "google-auth-library": "^10.1.0",
+    "googleapis": "^150.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.7",
+    "node-cron": "^4.1.1",
+    "nodemailer": "^7.0.3",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
