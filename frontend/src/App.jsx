@@ -6,14 +6,14 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import AllRatings from './pages/allRating';
-import AllSubmissions from './pages/allSumissions';
-import ContestPage from './pages/ContestPage';
+import "react-toastify/dist/ReactToastify.css";
+import AllRatings from "./pages/allRating";
+import AllSubmissions from "./pages/allSumissions";
+import ContestPage from "./pages/ContestPage";
 import ProblemsPage from "./pages/ProblemsPage";
 import CreateContestPage from "./pages/CreateContestPage";
 import { AuthContext } from "./context/AuthContext";
-import axios from "axios";
+import api from "./utils/axiosConfig"; // ✅ use custom axios instance
 
 function App() {
   const { token } = useContext(AuthContext);
@@ -36,19 +36,19 @@ function App() {
 
     const checkRunningContest = async () => {
       try {
-        const res = await axios.get("/api/contest/my", {
+        const res = await api.get("/contest/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const now = new Date();
 
-        const ongoing = res.data.find(c => {
+        const ongoing = res.data.find((c) => {
           const start = new Date(c.startTime);
           const end = new Date(c.endTime);
           return now >= start && now <= end;
         });
 
-        const justEnded = res.data.find(c => {
+        const justEnded = res.data.find((c) => {
           const end = new Date(c.endTime);
           return now > end && now - end < 30000; // ended within last 30s
         });
@@ -85,7 +85,10 @@ function App() {
       {runningContest?.type === "ongoing" && (
         <div className="fixed bottom-0 left-0 w-full bg-green-700 text-white text-center py-2 z-50 shadow-md">
           Contest <strong>{runningContest.data.name}</strong> is live!{" "}
-          <Link to={`/contest/${runningContest.data._id}`} className="underline font-semibold">
+          <Link
+            to={`/contest/${runningContest.data._id}`}
+            className="underline font-semibold"
+          >
             Join Now →
           </Link>
         </div>

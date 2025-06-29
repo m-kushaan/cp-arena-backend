@@ -1,9 +1,9 @@
 // src/pages/ContestPage.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import api from "../utils/axiosConfig";
 
 export default function ContestPage() {
   const { id } = useParams();
@@ -18,7 +18,7 @@ export default function ContestPage() {
 
   const fetchContest = async () => {
     try {
-      const res = await axios.get(`/api/contest/${id}`, {
+      const res = await api.get(`/contest/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const c = res.data;
@@ -39,13 +39,13 @@ export default function ContestPage() {
 
   const fetchVerdicts = async () => {
     try {
-      const res = await axios.get(`/api/submissions/contest/status/${id}`, {
+      const res = await api.get(`/submissions/contest/status/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const verdictMap = {};
       res.data.problemsStatus.forEach((p) => {
         const key = `${p.contestId}-${p.index}`;
-        if (p.solved) verdictMap[key] = "OK"; // Only set if solved
+        if (p.solved) verdictMap[key] = "OK";
       });
       setVerdicts(verdictMap);
     } catch (err) {
@@ -54,7 +54,7 @@ export default function ContestPage() {
   };
 
   useEffect(() => {
-    fetchContest();
+    if (token) fetchContest();
   }, [id, token]);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function ContestPage() {
         const diff = start - now;
         if (diff <= 0) {
           clearInterval(interval);
-          fetchContest(); // Refresh status
+          fetchContest();
         } else {
           const mins = Math.floor(diff / 60000);
           const secs = Math.floor((diff % 60000) / 1000);
@@ -96,7 +96,7 @@ export default function ContestPage() {
 
     if (timeStatus === "after" && !redirected) {
       setRedirected(true);
-      setTimeout(() => navigate("/profile"), 2000); // Delay to show banner
+      setTimeout(() => navigate("/profile"), 2000);
     }
   }, [contest, timeStatus]);
 
