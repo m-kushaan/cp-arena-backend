@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import api from "../utils/axiosConfig";
+import axios from "axios";
 
 export default function ContestPage() {
   const { id } = useParams();
@@ -11,14 +11,14 @@ export default function ContestPage() {
   const { token } = useContext(AuthContext);
 
   const [contest, setContest] = useState(null);
-  const [timeStatus, setTimeStatus] = useState("loading"); // "loading", "before", "during", "after"
+  const [timeStatus, setTimeStatus] = useState("loading");
   const [countdown, setCountdown] = useState("");
   const [verdicts, setVerdicts] = useState({});
   const [redirected, setRedirected] = useState(false);
 
   const fetchContest = async () => {
     try {
-      const res = await api.get(`/contest/${id}`, {
+      const res = await axios.get(`/api/contest/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const c = res.data;
@@ -39,7 +39,7 @@ export default function ContestPage() {
 
   const fetchVerdicts = async () => {
     try {
-      const res = await api.get(`/submissions/contest/status/${id}`, {
+      const res = await axios.get(`/api/submissions/contest/status/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const verdictMap = {};
@@ -108,6 +108,12 @@ export default function ContestPage() {
     }
   }, [timeStatus]);
 
+  const getVerdictColor = (verdict) => {
+    if (!verdict) return "border-gray-500";
+    if (verdict === "OK") return "border-green-500";
+    return "border-red-500";
+  };
+
   if (timeStatus === "loading" || !contest) {
     return (
       <div className="min-h-screen text-white bg-black flex justify-center items-center">
@@ -149,12 +155,6 @@ export default function ContestPage() {
       </div>
     );
   }
-
-  const getVerdictColor = (verdict) => {
-    if (!verdict) return "border-gray-500";
-    if (verdict === "OK") return "border-green-500";
-    return "border-red-500";
-  };
 
   return (
     <div className="min-h-screen text-white bg-black p-6">

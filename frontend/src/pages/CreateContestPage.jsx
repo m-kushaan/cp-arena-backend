@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import axios from "../utils/axiosInstance";
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,6 @@ export default function CreateContestPage() {
     }
 
     try {
-        console.log("Token in CreateContestPage:", token);
       const res = await axios.post(
         "/api/contest/auto-create",
         {
@@ -39,13 +38,15 @@ export default function CreateContestPage() {
           startTime,
           endTime,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       toast.success("Contest created!");
       navigate("/profile");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Creation failed");
+      toast.error(err.response?.data?.message || "Failed to create contest");
     }
   };
 
@@ -102,7 +103,9 @@ export default function CreateContestPage() {
               required
             >
               {Array.from({ length: 23 }, (_, i) => 800 + i * 100).map((val) => (
-                <option key={val} value={val}>{val}</option>
+                <option key={val} value={val}>
+                  {val}
+                </option>
               ))}
             </select>
           ))}

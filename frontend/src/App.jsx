@@ -13,19 +13,16 @@ import ContestPage from "./pages/ContestPage";
 import ProblemsPage from "./pages/ProblemsPage";
 import CreateContestPage from "./pages/CreateContestPage";
 import { AuthContext } from "./context/AuthContext";
-import api from "./utils/axiosConfig"; // ✅ use custom axios instance
+import axios from "axios";
 
 function App() {
   const { token } = useContext(AuthContext);
   const [runningContest, setRunningContest] = useState(null);
   const [isReady, setIsReady] = useState(false);
 
-  // ✅ Delay render until AuthContext is fully initialized
+  // Delay rendering until AuthContext is initialized
   useEffect(() => {
-    const initialize = () => {
-      setIsReady(true); // even if token is null, we're ready
-    };
-    setTimeout(initialize, 0); // wait 1 tick
+    setTimeout(() => setIsReady(true), 0);
   }, []);
 
   useEffect(() => {
@@ -36,7 +33,7 @@ function App() {
 
     const checkRunningContest = async () => {
       try {
-        const res = await api.get("/contest/my", {
+        const res = await axios.get("/api/contest/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -50,7 +47,7 @@ function App() {
 
         const justEnded = res.data.find((c) => {
           const end = new Date(c.endTime);
-          return now > end && now - end < 30000; // ended within last 30s
+          return now > end && now - end < 30000; // ended within last 30 seconds
         });
 
         if (ongoing) {
@@ -74,14 +71,14 @@ function App() {
     return () => clearInterval(interval);
   }, [token]);
 
-  if (!isReady) return null; // ⏳ wait until context is ready
+  if (!isReady) return null;
 
   return (
     <Router>
       <Navbar />
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* 🟢 Ongoing Contest Banner */}
+      {/* Ongoing Contest Banner */}
       {runningContest?.type === "ongoing" && (
         <div className="fixed bottom-0 left-0 w-full bg-green-700 text-white text-center py-2 z-50 shadow-md">
           Contest <strong>{runningContest.data.name}</strong> is live!{" "}
@@ -94,7 +91,7 @@ function App() {
         </div>
       )}
 
-      {/* 🔴 Ended Contest Banner */}
+      {/* Ended Contest Banner */}
       {runningContest?.type === "ended" && (
         <div className="fixed bottom-0 left-0 w-full bg-red-700 text-white text-center py-2 z-50 shadow-md">
           Contest <strong>{runningContest.data.name}</strong> has ended. Redirecting...
