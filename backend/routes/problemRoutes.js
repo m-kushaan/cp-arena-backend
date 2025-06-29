@@ -6,6 +6,6 @@ import authMiddleware from '../middlewares/authMiddlewares.js';
 
 const router = express.Router();
 
-router.get('/codeforces', authMiddleware, getCodeforcesProblems);
+router.get('/', authMiddleware, getCodeforcesProblems);
 
 export default router; // ✅ ES module style export

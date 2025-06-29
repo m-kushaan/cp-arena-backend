@@ -21,6 +21,10 @@ export const registerSchema = z.object({
     .string()
     .min(3, "Codeforces handle must be at least 3 characters")
     .regex(/^[A-Za-z0-9_-]+$/, "Handle can only include letters, numbers, underscores, or hyphens"),
+
+  notifiedContests: z.array(z.number()).optional() ,
+
+  mutuals: z.array(z.string()).optional()
 });
 
 

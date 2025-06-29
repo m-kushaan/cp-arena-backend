@@ -34,6 +34,10 @@ const contestSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  reminderSent: {
+  type: Boolean,
+  default: false
+}
 });
 
 const Contest = mongoose.model("Contest", contestSchema);

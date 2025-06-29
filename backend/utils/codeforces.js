@@ -1,6 +1,6 @@
-import axios from "axios";
+// utils/codeforces.js
+import axios from 'axios';
 
-// Shared cache
 let cachedProblems = null;
 
 export const getCodeforcesProblemset = async () => {
@@ -11,22 +11,49 @@ export const getCodeforcesProblemset = async () => {
   return cachedProblems;
 };
 
-export const getRandomProblemByRating = async (rating) => {
-  const problems = await getCodeforcesProblemset();
+export const getFilteredProblems = async ({
+  rating = null,
+  tag = null,
+  excludeSolved = false,
+  userHandle = null
+} = {}) => {
+  const allProblems = await getCodeforcesProblemset();
 
-  const filtered = problems.filter(
-    (p) => p.rating === rating && p.contestId && p.index
-  );
+  let verdictMap = new Map();
+  if (excludeSolved && userHandle) {
+    const submissionRes = await axios.get(
+      `https://codeforces.com/api/user.status?handle=${userHandle}`
+    );
 
-  if (filtered.length === 0) return null;
+    for (const sub of submissionRes.data.result) {
+      const id = `${sub.problem.contestId}-${sub.problem.index}`;
+      if (!verdictMap.has(id)) {
+        verdictMap.set(id, sub.verdict);
+      }
+    }
+  }
 
-  const random = filtered[Math.floor(Math.random() * filtered.length)];
+  const filtered = allProblems
+    .filter((p) => {
+      const id = `${p.contestId}-${p.index}`;
+      const byDifficulty = !rating || p.rating == rating;
+      const byTag = !tag || (p.tags && p.tags.includes(tag));
+      const notSolved = !excludeSolved || verdictMap.get(id) !== 'OK';
+      return byDifficulty && byTag && notSolved;
+    })
+    .map((p) => {
+      const id = `${p.contestId}-${p.index}`;
+      return {
+        ...p,
+        verdict: verdictMap.get(id) || null,
+      };
+    });
 
-  return {
-    codeforcesId: `${random.contestId}${random.index}`,
-    name: random.name,
-    link: `https://codeforces.com/contest/${random.contestId}/problem/${random.index}`,
-    contestId: random.contestId,
-    index: random.index,
-  };
+  // Recent first
+  filtered.sort((a, b) => {
+    if (a.contestId !== b.contestId) return b.contestId - a.contestId;
+    return a.index.localeCompare(b.index);
+  });
+
+  return filtered;
 };

@@ -1,7 +1,8 @@
-// GET /api/dashboard
 import User from '../model/User.js';
 import Contest from '../model/contests.js';
 import axios from 'axios';
+import mongoose from 'mongoose';
+
 
 export const getDashboardData = async (req, res) => {
   try {
@@ -19,19 +20,49 @@ export const getDashboardData = async (req, res) => {
     const now = new Date();
 
     // ➤ CLASSIFY PRIVATE CONTESTS
+
     const allMyContests = await Contest.find({
-      $or: [{ participants: req.user._id }, { createdBy: req.user._id }]
+      $or: [
+        { participants: new mongoose.Types.ObjectId(req.user._id) },
+        { createdBy: new mongoose.Types.ObjectId(req.user._id) }
+      ]
     });
+
+    console.log(allMyContests);
+    console.log("User ID in request:", req.user._id);
+
 
     const upcoming = [], ongoing = [], past = [];
 
     for (const c of allMyContests) {
+      if (!c.startTime || !c.endTime) continue; // skip contests missing time info
       const start = new Date(c.startTime);
       const end = new Date(c.endTime);
       if (start > now) upcoming.push(c);
       else if (start <= now && end > now) ongoing.push(c);
       else past.push(c);
     }
+
+    // ➤ FETCH CODEFORCES CONTESTS
+    const cfContestRes = await axios.get("https://codeforces.com/api/contest.list");
+    const cfContestsRaw = cfContestRes.data.result;
+
+    const cfUpcoming = [];
+    const cfOngoing = [];
+
+    cfContestsRaw.forEach(contest => {
+      if (contest.phase === "BEFORE") cfUpcoming.push(contest);
+      else if (contest.phase === "CODING") cfOngoing.push(contest);
+    });
+
+    // Limit CF contests to top 2 each
+    cfUpcoming.sort((a, b) => a.startTimeSeconds - b.startTimeSeconds);
+    cfOngoing.sort((a, b) => a.startTimeSeconds - b.startTimeSeconds);
+
+    const cfContests = {
+      upcoming: cfUpcoming.slice(0, 2),
+      ongoing: cfOngoing.slice(0, 2),
+    };
 
     // ➤ STREAK TRACKER
     const submissions = statusRes.data.result;
@@ -69,11 +100,10 @@ export const getDashboardData = async (req, res) => {
       const prob = sub.problem;
       const id = `${prob.contestId}-${prob.index}`;
 
-      // Record all attempts
       attempted.add(id);
 
       if (sub.verdict === "OK") {
-        solved.add(id); // Track solved problems
+        solved.add(id);
 
         if (prob.rating) {
           ratingCount[prob.rating] = (ratingCount[prob.rating] || 0) + 1;
@@ -83,9 +113,7 @@ export const getDashboardData = async (req, res) => {
             tagCount[tag] = (tagCount[tag] || 0) + 1;
           });
         }
-
       } else {
-        // Only increment weak tags if not accepted
         if (prob.tags) {
           prob.tags.forEach(tag => {
             weakTagCount[tag] = (weakTagCount[tag] || 0) + 1;
@@ -102,6 +130,7 @@ export const getDashboardData = async (req, res) => {
       ratingHistory: ratingRes.data.result,
       submissions,
       privateContests: { upcoming, ongoing, past },
+      cfContests,
       streakData: streakData.reverse(),
       ratingGraph: ratingCount,
       tagsSolved: tagCount,
