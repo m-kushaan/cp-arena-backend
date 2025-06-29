@@ -1,7 +1,7 @@
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
-import 'C:/Users/KUSHAAN MAHAJAN/cp-arena-backend/frontend/src/index.css'; // This should already be there
+import '../index.css'; // This should already be there
 
 
 export default function Heatmap({ data }) {
