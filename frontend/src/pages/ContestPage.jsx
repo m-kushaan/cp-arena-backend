@@ -1,4 +1,3 @@
-// src/pages/ContestPage.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -7,14 +6,12 @@ import axios from "axios";
 
 export default function ContestPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { token } = useContext(AuthContext);
 
   const [contest, setContest] = useState(null);
   const [timeStatus, setTimeStatus] = useState("loading");
   const [countdown, setCountdown] = useState("");
   const [verdicts, setVerdicts] = useState({});
-  const [redirected, setRedirected] = useState(false);
 
   const fetchContest = async () => {
     try {
@@ -59,6 +56,7 @@ export default function ContestPage() {
 
   useEffect(() => {
     if (!contest) return;
+
     const start = new Date(contest.startTime);
     const end = new Date(contest.endTime);
 
@@ -68,7 +66,7 @@ export default function ContestPage() {
         const diff = start - now;
         if (diff <= 0) {
           clearInterval(interval);
-          fetchContest();
+          fetchContest(); // refresh status
         } else {
           const mins = Math.floor(diff / 60000);
           const secs = Math.floor((diff % 60000) / 1000);
@@ -92,11 +90,6 @@ export default function ContestPage() {
         }
       }, 1000);
       return () => clearInterval(interval);
-    }
-
-    if (timeStatus === "after" && !redirected) {
-      setRedirected(true);
-      setTimeout(() => navigate("/profile"), 2000);
     }
   }, [contest, timeStatus]);
 
@@ -122,47 +115,22 @@ export default function ContestPage() {
     );
   }
 
-  if (timeStatus === "before") {
-    return (
-      <div className="min-h-screen text-white bg-black flex justify-center items-center text-center p-4">
-        <div>
-          <h2 className="text-xl font-bold text-red-400 mb-2">⏳ Contest Not Started</h2>
-          <p className="text-gray-400 mb-2">
-            The contest <strong>{contest.name}</strong> starts at <br />
-            <span className="text-blue-400">{new Date(contest.startTime).toLocaleString()}</span>
-          </p>
-          <p className="text-yellow-400 font-semibold">Starts in: {countdown}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (timeStatus === "after") {
-    return (
-      <div className="min-h-screen text-white bg-black flex justify-center items-center text-center p-4">
-        <div>
-          <h2 className="text-xl font-bold text-yellow-400 mb-2">📛 Contest Over</h2>
-          <p className="text-gray-400 mb-4">
-            The contest <strong>{contest.name}</strong> has ended.
-          </p>
-          <button
-            onClick={() => navigate("/profile")}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
-          >
-            Go to Profile
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen text-white bg-black p-6">
       <h1 className="text-2xl font-bold mb-2">{contest.name}</h1>
       <p className="mb-1"><strong>Duration:</strong> {contest.duration} mins</p>
       <p className="mb-1"><strong>Start:</strong> {new Date(contest.startTime).toLocaleString()}</p>
       <p className="mb-2"><strong>End:</strong> {new Date(contest.endTime).toLocaleString()}</p>
-      <p className="text-green-400 font-semibold mb-4">⏰ Ends in: {countdown}</p>
+
+      {timeStatus === "before" && (
+        <p className="text-yellow-400 font-semibold mb-4">⏳ Starts in: {countdown}</p>
+      )}
+      {timeStatus === "during" && (
+        <p className="text-green-400 font-semibold mb-4">⏰ Ends in: {countdown}</p>
+      )}
+      {timeStatus === "after" && (
+        <p className="text-red-400 font-semibold mb-4">📛 Contest Over</p>
+      )}
 
       <h2 className="text-xl font-semibold mt-4 mb-2">Problems</h2>
       <div className="grid gap-4 md:grid-cols-2">
