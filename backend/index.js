@@ -26,9 +26,10 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173', // allow requests from frontend dev server
+  origin: ["http://localhost:5173", "https://cp-arena-backend-1.onrender.com"],
   credentials: true
 }));
+
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
