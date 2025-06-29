@@ -3,10 +3,10 @@ import Contest from '../model/contests.js';
 import axios from 'axios';
 import mongoose from 'mongoose';
 
-
 export const getDashboardData = async (req, res) => {
   try {
     const cfHandle = req.user.codeforcesHandle;
+
     if (!cfHandle) {
       return res.status(400).json({ message: 'Codeforces handle not found' });
     }
@@ -17,10 +17,19 @@ export const getDashboardData = async (req, res) => {
       axios.get(`https://codeforces.com/api/user.status?handle=${cfHandle}`)
     ]);
 
+    // ✅ Validate CF responses
+    const validateCF = (res, name) => {
+      if (!res.data || res.data.status !== "OK") {
+        throw new Error(`Codeforces API error in ${name}: ${res.data?.comment || "Unknown error"}`);
+      }
+    };
+    validateCF(userInfoRes, 'user.info');
+    validateCF(ratingRes, 'user.rating');
+    validateCF(statusRes, 'user.status');
+
     const now = new Date();
 
-    // ➤ CLASSIFY PRIVATE CONTESTS
-
+    // ➤ PRIVATE CONTESTS
     const allMyContests = await Contest.find({
       $or: [
         { participants: new mongoose.Types.ObjectId(req.user._id) },
@@ -28,14 +37,10 @@ export const getDashboardData = async (req, res) => {
       ]
     });
 
-    console.log(allMyContests);
-    console.log("User ID in request:", req.user._id);
-
-
     const upcoming = [], ongoing = [], past = [];
 
     for (const c of allMyContests) {
-      if (!c.startTime || !c.endTime) continue; // skip contests missing time info
+      if (!c.startTime || !c.endTime) continue;
       const start = new Date(c.startTime);
       const end = new Date(c.endTime);
       if (start > now) upcoming.push(c);
@@ -43,19 +48,16 @@ export const getDashboardData = async (req, res) => {
       else past.push(c);
     }
 
-    // ➤ FETCH CODEFORCES CONTESTS
+    // ➤ CF CONTESTS
     const cfContestRes = await axios.get("https://codeforces.com/api/contest.list");
-    const cfContestsRaw = cfContestRes.data.result;
+    const cfContestsRaw = cfContestRes.data.result || [];
 
-    const cfUpcoming = [];
-    const cfOngoing = [];
-
+    const cfUpcoming = [], cfOngoing = [];
     cfContestsRaw.forEach(contest => {
       if (contest.phase === "BEFORE") cfUpcoming.push(contest);
       else if (contest.phase === "CODING") cfOngoing.push(contest);
     });
 
-    // Limit CF contests to top 2 each
     cfUpcoming.sort((a, b) => a.startTimeSeconds - b.startTimeSeconds);
     cfOngoing.sort((a, b) => a.startTimeSeconds - b.startTimeSeconds);
 
@@ -64,10 +66,26 @@ export const getDashboardData = async (req, res) => {
       ongoing: cfOngoing.slice(0, 2),
     };
 
-    // ➤ STREAK TRACKER
-    const submissions = statusRes.data.result;
-    const solvedDatesSet = new Set();
+    // ➤ HANDLE NO SUBMISSIONS
+    const submissions = statusRes.data.result || [];
 
+    if (submissions.length === 0) {
+      return res.json({
+        userInfo: userInfoRes.data.result[0],
+        ratingHistory: ratingRes.data.result || [],
+        submissions: [],
+        privateContests: { upcoming, ongoing, past },
+        cfContests,
+        streakData: [],
+        ratingGraph: {},
+        tagsSolved: {},
+        unsolvedProblems: [],
+        weakTopics: {}
+      });
+    }
+
+    // ➤ STREAK DATA
+    const solvedDatesSet = new Set();
     submissions.forEach(sub => {
       if (sub.verdict === "OK") {
         const date = new Date(sub.creationTimeSeconds * 1000);
@@ -88,23 +106,17 @@ export const getDashboardData = async (req, res) => {
       });
     }
 
-    // ➤ RATING / TAG / WEAK TOPIC / UNSOLVED STATS
-    const ratingCount = {};
-    const tagCount = {};
-    const weakTagCount = {};
-
-    const attempted = new Set();
-    const solved = new Set();
+    // ➤ RATING / TAG STATS
+    const ratingCount = {}, tagCount = {}, weakTagCount = {};
+    const attempted = new Set(), solved = new Set();
 
     submissions.forEach(sub => {
       const prob = sub.problem;
       const id = `${prob.contestId}-${prob.index}`;
-
       attempted.add(id);
 
       if (sub.verdict === "OK") {
         solved.add(id);
-
         if (prob.rating) {
           ratingCount[prob.rating] = (ratingCount[prob.rating] || 0) + 1;
         }
@@ -124,10 +136,10 @@ export const getDashboardData = async (req, res) => {
 
     const unsolvedProblems = [...attempted].filter(id => !solved.has(id));
 
-    // ➤ Return everything
+    // ➤ FINAL RETURN
     return res.json({
       userInfo: userInfoRes.data.result[0],
-      ratingHistory: ratingRes.data.result,
+      ratingHistory: ratingRes.data.result || [],
       submissions,
       privateContests: { upcoming, ongoing, past },
       cfContests,
@@ -139,7 +151,7 @@ export const getDashboardData = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Dashboard Error:', error.message);
-    res.status(500).json({ message: 'Error fetching dashboard data' });
+    console.error('❌ Dashboard Error:', error); // log full error object
+    return res.status(500).json({ message: 'Internal Server Error. Could not fetch dashboard data.' });
   }
 };
