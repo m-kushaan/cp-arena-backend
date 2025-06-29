@@ -1,0 +1,20 @@
+# Dependency directory
+node_modules/
+
+# Build output
+dist/
+
+# Vite cache
+.vite/
+
+# Lock files (optional — can regenerate with npm install)
+package-lock.json
+yarn.lock
+
+# Editor configs and OS junk
+.vscode/
+.DS_Store
+
+# Environment variables
+.env
+.env.*
