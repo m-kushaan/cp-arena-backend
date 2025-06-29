@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
+import axios from 'axios'; // ✅ Make sure this line exists before using axios
+
 
 import './index.css';
 import App from './App.jsx';
