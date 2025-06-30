@@ -80,25 +80,25 @@ export default function Profile() {
   } = cfContests;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white px-4 py-8">
       {/* Profile Box */}
-      <div className="max-w-4xl mx-auto bg-zinc-900 rounded-xl shadow-lg flex flex-col md:flex-row p-6">
+      <div className="max-w-4xl mx-auto bg-zinc-900 rounded-xl shadow-lg flex flex-col md:flex-row p-6 gap-6 sm:gap-10">
         <div className="w-full md:w-1/3 flex flex-col items-center">
           <img
             src={userInfo.titlePhoto}
             alt="User Avatar"
-            className="rounded-md border-4 border-red-600 shadow-md w-48 h-48 object-cover"
+            className="rounded-md border-4 border-red-600 shadow-md w-40 h-40 sm:w-48 sm:h-48 object-cover"
           />
           <a
             href={`https://codeforces.com/profile/${userInfo.handle}`}
             target="_blank"
             rel="noreferrer"
-            className="mt-3 text-xl font-bold text-red-500 hover:underline"
+            className="mt-3 text-lg sm:text-xl font-bold text-red-500 hover:underline text-center"
           >
             {userInfo.handle}
           </a>
         </div>
-        <div className="w-full md:w-2/3 px-6 mt-6 md:mt-0 flex flex-col justify-center space-y-3">
+        <div className="w-full md:w-2/3 space-y-3 text-sm sm:text-base">
           <p><span className="text-red-400 font-medium">Name:</span> {userInfo.firstName} {userInfo.lastName}</p>
           <p><span className="text-red-400">Rank:</span> <span className={getColorClass(userInfo.rating)}>{userInfo.rank}</span></p>
           <p><span className="text-red-400">Rating:</span> <span className={getColorClass(userInfo.rating)}>{userInfo.rating}</span> (max: <span className={getColorClass(userInfo.maxRating)}>{userInfo.maxRating}, {userInfo.maxRank}</span>)</p>
@@ -110,83 +110,79 @@ export default function Profile() {
       </div>
 
       {/* Private Contests */}
-<div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
-  <h3 className="text-lg font-semibold text-red-400 mb-4">Private Contests</h3>
-  {[{ type: "Upcoming", list: upcomingPrivateContests }, { type: "Ongoing", list: ongoingPrivateContests }, { type: "Previous", list: pastPrivateContests }].map(({ type, list }) => (
-    <div key={type} className="mb-4">
-      <h4 className="text-md text-blue-400 mb-2">{type} Contests</h4>
-      {list.length === 0 ? (
-        <p className="text-sm text-gray-500 italic">No {type.toLowerCase()} contests</p>
-      ) : (
-        <ul className="space-y-2 text-sm">
-          {list.map((contest, i) => (
-            <li key={i} className="flex justify-between items-center">
-              <a
-                href={`/contest/${contest._id}`}
-                className="text-blue-300 hover:underline"
-              >
-                {contest.name}
-              </a>
-              {type === "Ongoing" ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs text-green-400">{formatTimeLeft(contest.endTime)}</span>
-                  <a
-                    href={`/contest/${contest._id}`}
-                    className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-white text-xs"
-                  >
-                    Join
-                  </a>
-                </div>
-              ) : type === "Upcoming" ? (
-                <span className="text-xs text-yellow-400">Starts in {formatTimeLeft(contest.startTime)}</span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  ))}
-</div>
-
+      <div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
+        <h3 className="text-lg font-semibold text-red-400 mb-4">Private Contests</h3>
+        {[{ type: "Upcoming", list: upcomingPrivateContests }, { type: "Ongoing", list: ongoingPrivateContests }, { type: "Previous", list: pastPrivateContests }].map(({ type, list }) => (
+          <div key={type} className="mb-4">
+            <h4 className="text-md text-blue-400 mb-2">{type} Contests</h4>
+            {list.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">No {type.toLowerCase()} contests</p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {list.map((contest, i) => (
+                  <li key={i} className="flex justify-between items-center">
+                    <a
+                      href={`/contest/${contest._id}`}
+                      className="text-blue-300 hover:underline"
+                    >
+                      {contest.name}
+                    </a>
+                    {type === "Ongoing" ? (
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-green-400">{formatTimeLeft(contest.endTime)}</span>
+                        <a
+                          href={`/contest/${contest._id}`}
+                          className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-white text-xs"
+                        >
+                          Join
+                        </a>
+                      </div>
+                    ) : type === "Upcoming" ? (
+                      <span className="text-xs text-yellow-400">Starts in {formatTimeLeft(contest.startTime)}</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
 
       {/* Codeforces Contests */}
-<div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
-  <h3 className="text-lg font-semibold text-red-400 mb-4">Codeforces Contests</h3>
-  {[{ type: "Upcoming", list: upcomingCFContests }, { type: "Ongoing", list: ongoingCFContests }].map(({ type, list }) => (
-    <div key={type} className="mb-4">
-      <h4 className="text-md text-blue-400 mb-2">{type} Contests</h4>
-      {list.length === 0 ? (
-        <p className="text-sm text-gray-500 italic">No {type.toLowerCase()} contests</p>
-      ) : (
-        <ul className="space-y-2 text-sm">
-          {list.map((contest, i) => {
-            const start = contest.startTimeSeconds * 1000;
-            const end = start + contest.durationSeconds * 1000;
-
-            const label = type === "Ongoing"
-              ? formatTimeLeft(end)
-              : `Starts in ${formatTimeLeft(start)}`;
-
-            return (
-              <li key={i} className="flex justify-between items-center">
-                <a
-                  href={`https://codeforces.com/contest/${contest.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-300 hover:underline"
-                >
-                  {contest.name}
-                </a>
-                <span className="text-xs text-green-400">{label}</span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  ))}
-</div>
-
+      <div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
+        <h3 className="text-lg font-semibold text-red-400 mb-4">Codeforces Contests</h3>
+        {[{ type: "Upcoming", list: upcomingCFContests }, { type: "Ongoing", list: ongoingCFContests }].map(({ type, list }) => (
+          <div key={type} className="mb-4">
+            <h4 className="text-md text-blue-400 mb-2">{type} Contests</h4>
+            {list.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">No {type.toLowerCase()} contests</p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {list.map((contest, i) => {
+                  const start = contest.startTimeSeconds * 1000;
+                  const end = start + contest.durationSeconds * 1000;
+                  const label = type === "Ongoing"
+                    ? formatTimeLeft(end)
+                    : `Starts in ${formatTimeLeft(start)}`;
+                  return (
+                    <li key={i} className="flex justify-between items-center">
+                      <a
+                        href={`https://codeforces.com/contest/${contest.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-300 hover:underline"
+                      >
+                        {contest.name}
+                      </a>
+                      <span className="text-xs text-green-400">{label}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
 
       {/* Rating Graph */}
       <div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
@@ -200,7 +196,7 @@ export default function Profile() {
         <Heatmap data={streakData} />
       </div>
 
-      {/* Pie Chart + Topic Breakdown */}
+      {/* Pie Chart + Breakdown */}
       <div className="max-w-4xl mx-auto mt-10 grid md:grid-cols-2 gap-6">
         <div className="bg-zinc-900 p-4 rounded-lg shadow-md min-h-[400px] flex flex-col">
           <h3 className="text-lg font-semibold text-red-400 mb-3">Problems Solved by Topic</h3>
@@ -219,7 +215,7 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Bar Chart (by Rating) */}
+      {/* Bar Chart */}
       <div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg">
         <h3 className="text-lg font-semibold text-red-400 mb-3">Problems Solved by Rating</h3>
         {Object.keys(ratingGraph).length ? (
@@ -229,11 +225,11 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Unsolved Problems - Horizontal Scroll */}
+      {/* Unsolved Problems */}
       {unsolvedProblems.length > 0 && (
         <div className="max-w-4xl mx-auto mt-10 bg-zinc-900 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-red-400 mb-3">Unsolved Problems</h3>
-          <div className="flex overflow-x-auto space-x-4">
+          <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
             {unsolvedProblems.map((id, i) => {
               const parts = id.split("-");
               if (parts.length !== 2) return null;

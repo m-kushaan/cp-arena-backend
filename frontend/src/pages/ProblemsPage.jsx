@@ -3,7 +3,6 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from 'react-toastify';
 
-
 export default function ProblemsPage() {
   const { token } = useContext(AuthContext);
   const [problems, setProblems] = useState([]);
@@ -49,16 +48,18 @@ export default function ProblemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white p-8">
-      <div className="max-w-4xl mx-auto bg-zinc-900 p-6 rounded-xl shadow-lg">
-        <h2 className="text-xl font-bold text-red-400 mb-4">Find Codeforces Problems</h2>
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white px-4 py-8">
+      <div className="w-full max-w-5xl mx-auto bg-zinc-900 p-5 sm:p-6 rounded-xl shadow-lg">
+        <h2 className="text-lg sm:text-xl font-bold text-red-400 mb-6 text-center sm:text-left">
+          Find Codeforces Problems
+        </h2>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-8">
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            className="bg-black text-white border border-zinc-600 rounded px-3 py-2"
+            className="bg-black text-white border border-zinc-600 rounded px-3 py-2 text-sm sm:text-base"
           >
             <option value="">All Difficulties</option>
             {[800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800].map((d) => (
@@ -69,7 +70,7 @@ export default function ProblemsPage() {
           <select
             value={tag}
             onChange={(e) => setTag(e.target.value)}
-            className="bg-black text-white border border-zinc-600 rounded px-3 py-2"
+            className="bg-black text-white border border-zinc-600 rounded px-3 py-2 text-sm sm:text-base"
           >
             <option value="">All Tags</option>
             {["greedy", "dp", "math", "implementation", "dfs and similar", "binary search"].map((t) => (
@@ -77,7 +78,7 @@ export default function ProblemsPage() {
             ))}
           </select>
 
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-sm sm:text-base">
             <input
               type="checkbox"
               checked={excludeSolved}
@@ -88,7 +89,7 @@ export default function ProblemsPage() {
 
           <button
             onClick={fetchProblems}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm sm:text-base font-semibold"
           >
             Filter
           </button>
@@ -96,12 +97,12 @@ export default function ProblemsPage() {
 
         {/* Problem List */}
         {loading ? (
-          <p className="text-gray-400">Loading problems...</p>
+          <p className="text-gray-400 text-sm">Loading problems...</p>
         ) : problems.length === 0 ? (
-          <p className="text-gray-400 italic">No problems found with selected filters.</p>
+          <p className="text-gray-400 italic text-sm">No problems found with selected filters.</p>
         ) : (
-          <div className="grid gap-4">
-            {problems.map((p, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {problems.map((p) => (
               <div
                 key={`${p.contestId}-${p.index}`}
                 className={`bg-zinc-800 rounded-lg p-4 shadow-md border ${getBoxColor(p.verdict)}`}
@@ -111,15 +112,15 @@ export default function ProblemsPage() {
                     href={`https://codeforces.com/contest/${p.contestId}/problem/${p.index}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-400 hover:underline font-medium"
+                    className="text-blue-400 hover:underline font-medium text-sm sm:text-base"
                   >
                     {p.name}
                   </a>
                   {p.rating && (
-                    <span className="text-sm text-gray-400">Rating: {p.rating}</span>
+                    <span className="text-xs sm:text-sm text-gray-400">Rating: {p.rating}</span>
                   )}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-xs sm:text-sm text-gray-500">
                   Tags: {p.tags.join(", ")}
                 </div>
               </div>

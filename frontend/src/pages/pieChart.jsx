@@ -4,7 +4,7 @@ import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -25,7 +25,11 @@ const colors = [
 
 const PieChart = ({ tagsSolved }) => {
   if (!tagsSolved || Object.keys(tagsSolved).length === 0) {
-    return <p className="text-gray-400 text-sm">No topic data available.</p>;
+    return (
+      <p className="text-gray-400 text-sm text-center">
+        No topic data available.
+      </p>
+    );
   }
 
   const labels = Object.keys(tagsSolved);
@@ -37,19 +41,21 @@ const PieChart = ({ tagsSolved }) => {
       {
         data: dataValues,
         backgroundColor: labels.map((_, i) => colors[i % colors.length]),
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "right",
         labels: {
-          color: "#ffffff"
-        }
+          color: "#ffffff",
+          padding: 10,
+        },
       },
       tooltip: {
         callbacks: {
@@ -57,13 +63,17 @@ const PieChart = ({ tagsSolved }) => {
             const tag = chartData.labels[context.dataIndex];
             const value = chartData.datasets[0].data[context.dataIndex];
             return `${tag}: ${value}`;
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   };
 
-  return <Pie data={chartData} options={options} />;
+  return (
+    <div className="w-full max-w-xl h-[350px] sm:h-[400px] mx-auto">
+      <Pie data={chartData} options={options} />
+    </div>
+  );
 };
 
 export default PieChart;

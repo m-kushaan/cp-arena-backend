@@ -10,9 +10,8 @@ import {
   Filler
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { format } from "date-fns";
 
-Chart.register(LineElement, PointElement, LinearScale, CategoryScale,TimeScale, Tooltip, Filler);
+Chart.register(LineElement, PointElement, LinearScale, CategoryScale, TimeScale, Tooltip, Filler);
 
 export default function RatingGraph({ ratingHistory }) {
   const data = {
@@ -47,10 +46,7 @@ export default function RatingGraph({ ratingHistory }) {
             const point = context.raw;
             return ` ${point.contestName} — ${point.y}`;
           },
-          afterLabel: (context) => {
-            const point = context.raw;
-            return `Click to open contest`;
-          }
+          afterLabel: () => `Click to open contest`
         }
       }
     },
@@ -67,15 +63,11 @@ export default function RatingGraph({ ratingHistory }) {
           maxRotation: 0,
           minRotation: 0,
         },
-        grid: {
-          color: "#444"
-        }
+        grid: { color: "#444" }
       },
       y: {
         ticks: { color: "white" },
-        grid: {
-          color: "#444"
-        }
+        grid: { color: "#444" }
       }
     },
     onClick: (evt, elements) => {

@@ -51,18 +51,20 @@ export default function CreateContestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-2xl mx-auto bg-zinc-900 p-6 rounded-xl shadow-lg">
-        <h2 className="text-xl font-bold text-red-400 mb-4">Create Private Contest</h2>
+    <div className="min-h-screen bg-black text-white px-4 py-8">
+      <div className="w-full max-w-screen-md mx-auto bg-zinc-900 p-4 sm:p-6 rounded-xl shadow-lg">
+        <h2 className="text-lg sm:text-xl font-bold text-red-400 mb-4 text-center">
+          Create Private Contest
+        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Contest Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full p-2 rounded bg-black text-white border border-zinc-600"
+            className="w-full p-2 sm:p-3 rounded bg-black text-white border border-zinc-600 text-sm sm:text-base"
           />
 
           <input
@@ -70,7 +72,7 @@ export default function CreateContestPage() {
             value={startTime}
             onChange={(e) => setStartTime(e.target.value)}
             required
-            className="w-full p-2 rounded bg-black text-white border border-zinc-600"
+            className="w-full p-2 sm:p-3 rounded bg-black text-white border border-zinc-600 text-sm sm:text-base"
           />
 
           <input
@@ -78,7 +80,7 @@ export default function CreateContestPage() {
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
             required
-            className="w-full p-2 rounded bg-black text-white border border-zinc-600"
+            className="w-full p-2 sm:p-3 rounded bg-black text-white border border-zinc-600 text-sm sm:text-base"
           />
 
           <input
@@ -91,28 +93,30 @@ export default function CreateContestPage() {
               setNumQuestions(count);
               setRatings(Array(count).fill("800"));
             }}
-            className="w-full p-2 rounded bg-black text-white border border-zinc-600"
+            className="w-full p-2 sm:p-3 rounded bg-black text-white border border-zinc-600 text-sm sm:text-base"
           />
 
-          {ratings.map((r, idx) => (
-            <select
-              key={idx}
-              value={r}
-              onChange={(e) => handleRatingChange(idx, e.target.value)}
-              className="w-full p-2 rounded bg-black text-white border border-zinc-600"
-              required
-            >
-              {Array.from({ length: 23 }, (_, i) => 800 + i * 100).map((val) => (
-                <option key={val} value={val}>
-                  {val}
-                </option>
-              ))}
-            </select>
-          ))}
+          <div className="flex flex-col gap-3">
+            {ratings.map((r, idx) => (
+              <select
+                key={idx}
+                value={r}
+                onChange={(e) => handleRatingChange(idx, e.target.value)}
+                className="w-full p-2 sm:p-3 rounded bg-black text-white border border-zinc-600 text-sm sm:text-base"
+                required
+              >
+                {Array.from({ length: 23 }, (_, i) => 800 + i * 100).map((val) => (
+                  <option key={val} value={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
+            ))}
+          </div>
 
           <button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded w-full"
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded w-full text-sm sm:text-base font-semibold transition"
           >
             Create Contest
           </button>

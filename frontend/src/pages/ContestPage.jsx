@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
@@ -66,7 +66,7 @@ export default function ContestPage() {
         const diff = start - now;
         if (diff <= 0) {
           clearInterval(interval);
-          fetchContest(); // refresh status
+          fetchContest();
         } else {
           const mins = Math.floor(diff / 60000);
           const secs = Math.floor((diff % 60000) / 1000);
@@ -116,24 +116,28 @@ export default function ContestPage() {
   }
 
   return (
-    <div className="min-h-screen text-white bg-black p-6">
-      <h1 className="text-2xl font-bold mb-2">{contest.name}</h1>
-      <p className="mb-1"><strong>Duration:</strong> {contest.duration} mins</p>
-      <p className="mb-1"><strong>Start:</strong> {new Date(contest.startTime).toLocaleString()}</p>
-      <p className="mb-2"><strong>End:</strong> {new Date(contest.endTime).toLocaleString()}</p>
+    <div className="min-h-screen bg-black text-white px-4 sm:px-6 lg:px-12 py-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4">{contest.name}</h1>
+
+      <div className="space-y-2 text-sm sm:text-base text-gray-300">
+        <p><strong>Duration:</strong> {contest.duration} mins</p>
+        <p><strong>Start:</strong> {new Date(contest.startTime).toLocaleString()}</p>
+        <p><strong>End:</strong> {new Date(contest.endTime).toLocaleString()}</p>
+      </div>
 
       {timeStatus === "before" && (
-        <p className="text-yellow-400 font-semibold mb-4">⏳ Starts in: {countdown}</p>
+        <p className="text-yellow-400 font-semibold mt-4">⏳ Starts in: {countdown}</p>
       )}
       {timeStatus === "during" && (
-        <p className="text-green-400 font-semibold mb-4">⏰ Ends in: {countdown}</p>
+        <p className="text-green-400 font-semibold mt-4">⏰ Ends in: {countdown}</p>
       )}
       {timeStatus === "after" && (
-        <p className="text-red-400 font-semibold mb-4">📛 Contest Over</p>
+        <p className="text-red-400 font-semibold mt-4">📛 Contest Over</p>
       )}
 
-      <h2 className="text-xl font-semibold mt-4 mb-2">Problems</h2>
-      <div className="grid gap-4 md:grid-cols-2">
+      <h2 className="text-xl sm:text-2xl font-semibold mt-8 mb-4">Problems</h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {contest.problems.map((p, idx) => {
           const verdict = verdicts[`${p.contestId}-${p.index}`] || null;
           return (
@@ -145,7 +149,7 @@ export default function ContestPage() {
                 href={p.link}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-400 hover:underline text-lg font-medium"
+                className="text-blue-400 hover:underline text-lg font-medium break-words"
               >
                 {p.name}
               </a>

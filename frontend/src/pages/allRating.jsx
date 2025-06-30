@@ -26,24 +26,27 @@ export default function AllRatings() {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <h1 className="text-2xl font-bold text-red-500 mb-6">Rating Changes</h1>
+    <div className="min-h-screen bg-black text-white px-4 sm:px-6 lg:px-12 py-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-red-500 mb-6 text-center sm:text-left">
+        Rating Changes
+      </h1>
+
       <ul className="space-y-4">
         {ratings.map((r, i) => (
           <li
             key={i}
-            className="bg-zinc-800 p-4 rounded-lg shadow-md text-sm flex flex-col md:flex-row justify-between"
+            className="bg-zinc-800 p-4 rounded-lg shadow-md flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-6"
           >
             <div>
               <a
                 href={`https://codeforces.com/contest/${r.contestId}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-400 hover:underline font-semibold"
+                className="text-blue-400 hover:underline font-semibold block text-sm sm:text-base"
               >
                 {r.contestName}
               </a>
-              <p className="text-gray-300 mt-1">
+              <p className="text-gray-300 mt-1 text-sm sm:text-base">
                 Old: {r.oldRating}, New:{" "}
                 <span className="text-green-400 font-semibold">{r.newRating}</span>{" "}
                 (<span className={r.newRating - r.oldRating >= 0 ? "text-green-500" : "text-red-500"}>
@@ -57,7 +60,7 @@ export default function AllRatings() {
               href={`https://codeforces.com/contest/${r.contestId}/standings`}
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-red-400 hover:underline mt-2 md:mt-0"
+              className="text-red-400 hover:underline text-sm self-start sm:self-center"
             >
               View Standings →
             </a>
