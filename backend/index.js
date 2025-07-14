@@ -28,15 +28,37 @@ if (!process.env.MONGO_URI) {
 // Initialize express app
 const app = express();
 
-// CORS setup
+// // CORS setup
+// const allowedOrigins = [
+//   'https://cp-arena-backend-1.onrender.com',
+//   'http://localhost:5173'
+// ];
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl)
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
+// Must be placed before all route handlers
+//app.options('*', cors()); // Allow preflight requests
+
 const allowedOrigins = [
-  'https://cp-arena-backend-1.onrender.com',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'https://cp-arena-backend-1.onrender.com', // or whatever your frontend prod URL is
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
+    // Allow requests with no origin (like Postman or curl)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -44,24 +66,35 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
 
-// Must be placed before all route handlers
-app.options('*', cors()); // Allow preflight requests
+app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  console.log("Incoming Origin:", req.headers.origin);
-  res.header("Access-Control-Allow-Origin", "localhost:5173, https://cp-arena-backend-1.onrender.com");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   const origin = req.headers.origin;
+//   if (allowedOrigins.includes(origin)) {
+//     res.header("Access-Control-Allow-Origin", origin);
+//   }
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   if (req.method === "OPTIONS") {
+//     return res.sendStatus(200);
+//   }
+//   next();
+// });
+
+// app.use((req, res, next) => {
+//   console.log("Incoming Origin:", req.headers.origin);
+//   res.header("Access-Control-Allow-Origin", "localhost:5173, https://cp-arena-backend-1.onrender.com");
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   if (req.method === "OPTIONS") {
+//     return res.sendStatus(200);
+//   }
+//   next();
+// });
 
 
 // Middleware
