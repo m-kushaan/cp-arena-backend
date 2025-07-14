@@ -53,7 +53,7 @@ app.options('*', cors()); // Allow preflight requests
 
 app.use((req, res, next) => {
   console.log("Incoming Origin:", req.headers.origin);
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Origin", "localhost:5173, https://cp-arena-backend-1.onrender.com");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
