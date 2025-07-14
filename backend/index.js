@@ -29,11 +29,22 @@ if (!process.env.MONGO_URI) {
 const app = express();
 
 // CORS setup
+const allowedOrigins = [
+  'https://cp-arena-frontend.onrender.com',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-  origin: ['https://cp-arena-frontend.onrender.com', 'http://localhost:5173'], // This allows all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow common methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Explicitly allow common headers
-  credentials: true, // Keep this if your frontend sends cookies/auth headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy violation: Origin not allowed'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // Middleware
