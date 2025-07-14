@@ -3,6 +3,8 @@ import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { BASE_URL } from '../utils/axiosConfig.js';
+
 
 export default function ContestPage() {
   const { id } = useParams();
@@ -15,7 +17,7 @@ export default function ContestPage() {
 
   const fetchContest = async () => {
     try {
-      const res = await axios.get(`/api/contest/${id}`, {
+      const res = await axios.get(`${BASE_URL}/api/contest/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const c = res.data;
@@ -36,7 +38,7 @@ export default function ContestPage() {
 
   const fetchVerdicts = async () => {
     try {
-      const res = await axios.get(`/api/submissions/contest/status/${id}`, {
+      const res = await axios.get(`${BASE_URL}/api/submissions/contest/status/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const verdictMap = {};

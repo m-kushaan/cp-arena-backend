@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from 'react-toastify';
+import { BASE_URL } from '../utils/axiosConfig.js';
 
 export default function ProblemsPage() {
   const { token } = useContext(AuthContext);
@@ -10,6 +11,8 @@ export default function ProblemsPage() {
   const [tag, setTag] = useState("");
   const [excludeSolved, setExcludeSolved] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+
 
   const fetchProblems = async () => {
     try {
@@ -19,7 +22,7 @@ export default function ProblemsPage() {
       if (tag) params.tag = tag;
       if (excludeSolved) params.excludeSolved = true;
 
-      const res = await axios.get("/api/problems", {
+      const res = await axios.get(`${BASE_URL}/api/problems`, {
         headers: { Authorization: `Bearer ${token}` },
         params,
       });

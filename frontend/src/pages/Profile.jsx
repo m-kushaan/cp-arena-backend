@@ -6,6 +6,7 @@ import Heatmap from "./Heatmap";
 import RatingGraph from "./RatingGraph";
 import BarChart from "./BarChart";
 import PieChart from "./pieChart";
+import { BASE_URL } from '../utils/axiosConfig.js';
 
 const getColorClass = (rating) => {
   if (rating >= 2900) return "text-black bg-yellow-400 font-bold px-2 py-0.5 rounded";
@@ -37,7 +38,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await axios.get("/api/dashboard", {
+        const res = await axios.get(`${BASE_URL}/api/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setData(res.data);

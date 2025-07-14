@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { BASE_URL } from '../utils/axiosConfig.js';
+
 
 export default function Register() {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/register', formData);
+      const res = await axios.post(`${BASE_URL}/api/auth/register`, formData);
       toast.success(res.data.message || 'Registered successfully!');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {

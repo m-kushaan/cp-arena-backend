@@ -3,6 +3,8 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from '../utils/axiosConfig.js';
+
 
 export default function CreateContestPage() {
   const { token } = useContext(AuthContext);
@@ -30,7 +32,7 @@ export default function CreateContestPage() {
 
     try {
       const res = await axios.post(
-        "/api/contest/auto-create",
+        `${BASE_URL}/api/contest/auto-create`,
         {
           name,
           numQuestions,

@@ -14,6 +14,8 @@ import ProblemsPage from "./pages/ProblemsPage";
 import CreateContestPage from "./pages/CreateContestPage";
 import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
+import { BASE_URL } from './utils/axiosConfig';
+
 
 function App() {
   const { token } = useContext(AuthContext);
@@ -33,7 +35,7 @@ function App() {
 
     const checkRunningContest = async () => {
       try {
-        const res = await axios.get("/api/contest/my", {
+        const res = await axios.get(`${BASE_URL}/api/contest/my`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

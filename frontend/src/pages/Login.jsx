@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
+import { BASE_URL } from '../utils/axiosConfig.js';
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
       toast.success("Logged in successfully!");
       login(res.data.token);
       navigate("/");

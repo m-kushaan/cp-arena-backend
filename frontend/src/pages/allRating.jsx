@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { BASE_URL } from '../utils/axiosConfig.js';
+
 
 export default function AllRatings() {
   const { token } = useContext(AuthContext);
@@ -10,7 +12,7 @@ export default function AllRatings() {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await axios.get("/api/dashboard", {
+        const res = await axios.get(`${BASE_URL}/api/dashboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const sorted = [...res.data.ratingHistory].sort(
