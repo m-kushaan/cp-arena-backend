@@ -30,7 +30,7 @@ const app = express();
 
 // CORS setup
 const allowedOrigins = [
-  'https://cp-arena-frontend.onrender.com',
+  'https://cp-arena-backend-1.onrender.com',
   'http://localhost:5173'
 ];
 
