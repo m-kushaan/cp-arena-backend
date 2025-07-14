@@ -30,7 +30,7 @@ const app = express();
 
 // CORS setup
 app.use(cors({
-  origin: '*', // This allows all origins
+  origin: ['https://cp-arena-frontend.onrender.com', 'http://localhost:5173'], // This allows all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow common methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Explicitly allow common headers
   credentials: true, // Keep this if your frontend sends cookies/auth headers
