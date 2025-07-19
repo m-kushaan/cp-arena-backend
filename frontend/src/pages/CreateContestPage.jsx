@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from '../utils/axiosConfig.js';
-
+axios.defaults.withCredentials = true;
 
 export default function CreateContestPage() {
   const { token } = useContext(AuthContext);

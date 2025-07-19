@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { BASE_URL } from '../utils/axiosConfig.js';
-
+axios.defaults.withCredentials = true;
 
 export default function ContestPage() {
   const { id } = useParams();

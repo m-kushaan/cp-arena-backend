@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from '../utils/axiosConfig.js';
-
+axios.defaults.withCredentials = true;
 
 export default function Login() {
   const navigate = useNavigate();

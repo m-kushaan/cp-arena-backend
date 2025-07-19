@@ -7,6 +7,7 @@ import RatingGraph from "./RatingGraph";
 import BarChart from "./BarChart";
 import PieChart from "./pieChart";
 import { BASE_URL } from '../utils/axiosConfig.js';
+axios.defaults.withCredentials = true;
 
 const getColorClass = (rating) => {
   if (rating >= 2900) return "text-black bg-yellow-400 font-bold px-2 py-0.5 rounded";

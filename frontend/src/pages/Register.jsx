@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../utils/axiosConfig.js';
+axios.defaults.withCredentials = true;
 
 
 export default function Register() {

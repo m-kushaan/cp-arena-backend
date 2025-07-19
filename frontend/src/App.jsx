@@ -15,6 +15,7 @@ import CreateContestPage from "./pages/CreateContestPage";
 import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
 import { BASE_URL } from './utils/axiosConfig';
+axios.defaults.withCredentials = true;
 
 
 function App() {

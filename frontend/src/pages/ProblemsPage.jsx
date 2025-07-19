@@ -3,6 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../utils/axiosConfig.js';
+axios.defaults.withCredentials = true;
 
 export default function ProblemsPage() {
   const { token } = useContext(AuthContext);
